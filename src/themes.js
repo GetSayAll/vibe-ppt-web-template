@@ -40,6 +40,22 @@ const shared = {
 
 export const themes = {
   default: { id: 'default', name: '默认', vars: shared },
+  fde: {
+    id: 'fde', name: 'FDE 暗色科技', vars: { ...shared,
+      '--theme-page-bg': '#eef8fa', '--theme-bg': '#f8fcff', '--theme-surface': '#ffffff',
+      '--theme-ink': '#193149', '--theme-muted': '#55758a', '--theme-faint': '#7a9aab',
+      '--theme-border': '#a9d3db', '--theme-border-strong': '#71b8c6', '--theme-title': '#193149',
+      '--theme-link': '#ff7f66', '--theme-accent': '#ff7f66', '--theme-accent-2': '#7acdb9',
+      '--theme-dark': '#e7f4f6', '--theme-dark-muted': '#416477', '--theme-dark-border': '#9bcbd3',
+      '--theme-display-font': '"Space Grotesk", "PingFang SC", "Noto Sans SC", sans-serif',
+      '--theme-body-font': '"Inter", "PingFang SC", "Noto Sans SC", sans-serif', '--theme-mono-font': '"IBM Plex Mono", ui-monospace, Menlo, monospace',
+      '--theme-radius': '0px', '--theme-shadow': '0 0 32px #63d8ff18', '--theme-ease': 'cubic-bezier(.2,.8,.2,1)',
+      '--theme-duration': '220ms', '--theme-motion-enter-duration': '560ms', '--theme-motion-slide-duration': '320ms', '--theme-motion-stagger': '60ms',
+      '--theme-motion-distance': '16px', '--theme-motion-hover-lift': '-3px', '--theme-motion-ambient-duration': '12s',
+      '--theme-slide-padding': '64px', '--theme-layout-gap': '32px', '--theme-heading-scale': '1',
+      '--theme-media-radius': '0px', '--theme-media-border': '1px solid #8fdcff55', '--theme-card-radius': '0px', '--theme-card-padding': '18px',
+    },
+  },
   apple: {
     id: 'apple', name: '苹果风', vars: { ...shared,
       '--theme-page-bg': '#f5f5f7', '--theme-bg': '#ffffff', '--theme-surface': '#fbfbfd',

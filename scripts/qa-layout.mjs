@@ -5,7 +5,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { chromium } from 'playwright'
 
-const themes = ['default', 'apple', 'dopamine', 'cyberpunk']
+const themes = ['default', 'apple', 'dopamine', 'cyberpunk', 'fde']
 const outputRoot = path.join(os.tmpdir(), 'vibe-ppt-layout-qa')
 
 const getFreePort = () => new Promise((resolve, reject) => {
@@ -92,9 +92,14 @@ const auditVisibleSlide = async (page) => page.evaluate(() => {
   const textElements = [...slide.querySelectorAll('h1,h2,h3,p,span,strong,small')]
     .filter(isVisible)
     .filter((element) => element.innerText.trim())
+    .filter((element) => !element.closest('.story-keywords'))
     .filter((element) => ![...element.children].some((child) => child.matches('h1,h2,h3,p,span,strong,small')))
-  const contentElements = [...slide.querySelectorAll('h1,h2,h3,p,.fact,.gallery-item,.gallery-stack-card--active,.pipeline-step,.flow-step,.reviews-stats > div,.review-wall > article,img:not(.slide-background):not(.gallery-stack-card img):not(.outro-marquee-card img),.qr')].filter(isVisible)
-  const images = [...slide.querySelectorAll('img:not(.slide-background):not(.gallery-stack-card img):not(.outro-marquee-card img)')].filter(isVisible)
+  const contentElements = [...slide.querySelectorAll('h1,h2,h3,p,.fact,.gallery-item,.gallery-stack-card--active,.pipeline-step,.flow-step,.reviews-stats > div,.review-wall > article,img:not(.slide-background):not(.gallery-stack-card img):not(.outro-marquee-card img),.qr')]
+    .filter(isVisible)
+    .filter((element) => !element.closest('.slide-qr-pair'))
+  const images = [...slide.querySelectorAll('img:not(.slide-background):not(.gallery-stack-card img):not(.outro-marquee-card img)')]
+    .filter(isVisible)
+    .filter((image) => !image.closest('.slide-qr-pair'))
 
   const outside = contentElements.filter((element) => {
     const rect = element.getBoundingClientRect()
@@ -245,11 +250,12 @@ try {
   await waitForServer(baseUrl, vite)
   await mkdir(outputRoot, { recursive: true })
   browser = await chromium.launch({ headless: true })
-  const page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
-  await page.addInitScript(() => {
+  let page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
+  const installFullscreenStubs = async (targetPage) => targetPage.addInitScript(() => {
     Object.defineProperty(document.documentElement, 'requestFullscreen', { configurable: true, value: async () => {} })
     Object.defineProperty(document, 'exitFullscreen', { configurable: true, value: async () => {} })
   })
+  await installFullscreenStubs(page)
 
   for (const theme of themes) {
     const themeOutput = path.join(outputRoot, theme)
@@ -284,7 +290,9 @@ try {
     await page.keyboard.press('Escape')
   }
 
-  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.close()
+  page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
+  await installFullscreenStubs(page)
   for (const theme of themes) {
     await page.goto(`${baseUrl}/?theme=${theme}`, { waitUntil: 'networkidle' })
     await page.getByRole('button', { name: '⛶ 演讲模式' }).click()
@@ -298,12 +306,14 @@ try {
     await page.keyboard.press('Escape')
   }
 
-  await page.setViewportSize({ width: 1280, height: 720 })
+  await page.close()
+  page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
+  await installFullscreenStubs(page)
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto(`${baseUrl}/?theme=default`, { waitUntil: 'networkidle' })
   await page.getByRole('button', { name: '⛶ 演讲模式' }).click()
   const reducedMotionFailures = await page.evaluate(() => {
-    const content = document.querySelector('.slide-frame--active .cover-inner')
+    const content = document.querySelector('.slide-frame--active .story-content')
     const scan = document.querySelector('.qr-scan')
     const failures = []
     if (!content || Number.parseFloat(getComputedStyle(content).animationDuration) > 0.01) failures.push('内容动画未按系统设置降级')

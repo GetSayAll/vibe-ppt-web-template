@@ -43,6 +43,16 @@ function SlideSurface({ slide, className, children }) {
           }}
         />
       ) : null}
+      <div className="slide-qr-pair" aria-label="关注入口">
+        <figure>
+          <div className="slide-qr-window"><img src="/assets/qr-wechat.jpg" alt="微信二维码" /></div>
+          <figcaption>微信</figcaption>
+        </figure>
+        <figure>
+          <div className="slide-qr-window"><img src="/assets/qr-xhs.jpg" alt="小红书二维码" /></div>
+          <figcaption>小红书</figcaption>
+        </figure>
+      </div>
       {children}
     </section>
   )
@@ -336,8 +346,86 @@ function OutroSlide({ slide }) {
   )
 }
 
+function StorySlide({ slide }) {
+  const renderFlow = (items, className) => (
+    <div className={className}>
+      {items.map((item, index) => (
+        <div className="story-node" key={typeof item === 'string' ? item : item.label}>
+          <span className="story-node__index">{String(index + 1).padStart(2, '0')}</span>
+          <strong>{typeof item === 'string' ? item : item.label}</strong>
+          {typeof item !== 'string' && item.note ? <small>{item.note}</small> : null}
+        </div>
+      ))}
+    </div>
+  )
+
+  return (
+    <SlideSurface slide={slide} className={`slide--story story--${slide.variant}`}>
+      <div className="story-glow" aria-hidden="true" />
+      <div className="story-content">
+        <Eyebrow>{slide.eyebrow}</Eyebrow>
+        {slide.variant === 'cover' ? (
+          <>
+            <h1 className="story-cover-title">{slide.titleLines.map((line) => <span key={line}>{line}</span>)}</h1>
+            <p className="story-subtitle">{slide.subtitle}</p>
+            <p className="story-note">{slide.note}</p>
+            <div className="story-keywords" aria-label="技术术语墙">
+              {slide.keywords.map((keyword, index) => <span key={keyword} style={{ '--keyword-delay': `${index * 40}ms` }}>{keyword}</span>)}
+            </div>
+          </>
+        ) : (
+          <h2 className="story-title">{slide.title}</h2>
+        )}
+
+        {slide.variant === 'cross-platform' ? (
+          <div className="story-platform-layout">
+            <div className="story-platforms">
+              {slide.platforms.map((platform) => <div className="story-platform" key={platform.label}><strong>{platform.label}</strong><small>{platform.note}</small></div>)}
+              <div className="story-platform-core"><span>一个功能</span><strong>一致体验</strong></div>
+            </div>
+            <div className="story-result">{slide.result}</div>
+            <p className="story-punch">{slide.punch}</p>
+          </div>
+        ) : null}
+
+        {slide.variant === 'problem-view' ? (
+          <div className="story-problem-layout">
+            <div className="story-compare story-compare--muted"><div className="story-compare-label">过去</div>{renderFlow(slide.before, 'story-flow')}</div>
+            <div className="story-compare story-compare--active"><div className="story-compare-label">现在</div>{renderFlow(slide.after, 'story-flow')}</div>
+            <p className="story-punch">{slide.punch}</p>
+          </div>
+        ) : null}
+
+        {slide.variant === 'blind-spots' ? (
+          <div className="story-blind-layout">
+            <p className="story-premise">{slide.premise}</p>
+            <div className="story-blind-grid">{slide.blindSpots.map((spot, index) => <article key={spot.label}><span>0{index + 1}</span><h3>{spot.label}</h3><p>{spot.detail}</p><small>{spot.note}</small></article>)}</div>
+            <p className="story-punch">{slide.punch}</p>
+          </div>
+        ) : null}
+
+        {slide.variant === 'system-operator' ? (
+          <div className="story-operator-layout">
+            <div className="story-operator-flow">{slide.steps.map((step, index) => <article key={step.label} className={index === 1 ? 'is-ai' : ''}><span>{step.label}</span><strong>{step.title}</strong><small>{step.detail}</small></article>)}</div>
+            <div className="story-operator-bottom"><p className="story-punch">{slide.punch}</p><p className="story-safety">{slide.safety}</p></div>
+          </div>
+        ) : null}
+
+        {slide.variant === 'work-style' ? (
+          <div className="story-work-layout"><div className="story-change-list">{slide.changes.map((change, index) => <div className="story-change" key={change.from}><span>0{index + 1}</span><div><strong>{change.from}</strong><em>{change.to}</em></div></div>)}</div><p className="story-punch">{slide.punch}</p></div>
+        ) : null}
+
+        {slide.variant === 'closing' ? (
+          <div className="story-closing-layout"><div className="story-advice">{slide.advice.map((item, index) => <div key={item}><span>0{index + 1}</span><strong>{item}</strong></div>)}</div><div className="story-final-lines">{slide.finalLines.map((line, index) => <span key={line} className={index === 2 ? 'is-accent' : ''}>{line}</span>)}</div></div>
+        ) : null}
+      </div>
+    </SlideSurface>
+  )
+}
+
 function renderSlide(slide, context) {
   switch (slide.type) {
+    case 'story': return <StorySlide slide={slide} />
     case 'cover': return <CoverSlide slide={slide} />
     case 'profile': return <ProfileSlide slide={slide} />
     case 'gallery': return <GallerySlide slide={slide} {...context} />
@@ -356,6 +444,7 @@ function renderSlide(slide, context) {
 
 export default function App() {
   const [presentation, setPresentation] = useState(false)
+  const [presentationScale, setPresentationScale] = useState(() => Math.min(window.innerWidth / 1280, window.innerHeight / 720))
   const [activeIndex, setActiveIndex] = useState(0)
   const [selectedProject, setSelectedProject] = useState(0)
   const [visibleSlides, setVisibleSlides] = useState(() => new Set([0]))
@@ -379,6 +468,17 @@ export default function App() {
     document.body.classList.toggle('present', presentation)
     return () => document.body.classList.remove('present')
   }, [presentation])
+
+  useEffect(() => {
+    const updatePresentationScale = () => setPresentationScale(Math.min(window.innerWidth / 1280, window.innerHeight / 720))
+    updatePresentationScale()
+    window.addEventListener('resize', updatePresentationScale)
+    document.addEventListener('fullscreenchange', updatePresentationScale)
+    return () => {
+      window.removeEventListener('resize', updatePresentationScale)
+      document.removeEventListener('fullscreenchange', updatePresentationScale)
+    }
+  }, [])
 
   useEffect(() => {
     const frames = [...(deckRef.current?.querySelectorAll('.slide-frame') || [])]
@@ -415,11 +515,16 @@ export default function App() {
   }, [activeIndex, presentation])
 
   return (
-    <main className={`app-shell motion-ready ${presentation ? 'app-shell--present' : ''}`} data-theme={themeId} style={theme.vars}>
-      <div className="toolbar">
-        {presentation && <span className="toolbar-count">{activeIndex + 1} / {deck.slides.length}</span>}
-        <button onClick={presentation ? exitPresentation : enterPresentation}>{presentation ? '退出演讲模式' : '⛶ 演讲模式'}</button>
-      </div>
+    <main
+      className={`app-shell motion-ready ${presentation ? 'app-shell--present' : ''}`}
+      data-theme={themeId}
+      style={{ ...theme.vars, '--presentation-scale': presentationScale }}
+    >
+      {!presentation && (
+        <div className="toolbar">
+          <button onClick={enterPresentation}>⛶ 演讲模式</button>
+        </div>
+      )}
       <div className="deck" ref={deckRef}>
         {deck.slides.map((slide, index) => (
           <div

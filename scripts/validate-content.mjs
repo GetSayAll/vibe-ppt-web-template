@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises'
 import { deck } from '../src/content.js'
 
-const supportedTypes = new Set(['cover', 'profile', 'gallery', 'chapter', 'pipeline', 'stat', 'flow', 'roadmap', 'reviews', 'skills', 'closing', 'outro'])
+const supportedTypes = new Set(['cover', 'profile', 'gallery', 'chapter', 'pipeline', 'stat', 'flow', 'roadmap', 'reviews', 'skills', 'closing', 'outro', 'story'])
 const contentSource = await fs.readFile(new URL('../src/content.js', import.meta.url), 'utf8')
 
 if (!Array.isArray(deck.slides) || deck.slides.length < 3) throw new Error('deck.slides 至少需要 3 页。')
