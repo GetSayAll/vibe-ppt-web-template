@@ -5,8 +5,9 @@ export const deck = {
   speaker: { name: 'FDE 分享', role: 'AI 时代的工作方式', account: '' },
   slides: [
     {
-      id: 'cover', type: 'story', variant: 'cover', theme: 'dark', eyebrow: '01 / SHIFT',
+      id: 'cover', type: 'story', variant: 'cover', theme: 'paper', eyebrow: '01 / SHIFT',
       titleLines: ['AI 时代', '我不会', '但我可以试试'], subtitle: '从 iOS 开发到企业内部 FDE 的转变',
+      backgroundImage: '/assets/cover-coffee-chat.jpg', backgroundFit: 'contain',
       keywords: [
         'K8s', 'Docker', 'Redis', 'Backend', 'Frontend', 'API', 'Token', 'UIKit', 'SwiftUI', 'Android Studio', 'Xcode', 'Codex',
         'MCP', 'Agent', 'LLM', 'SQL', 'CI/CD', 'Bluetooth', 'HID', 'Kafka', 'ESP32', 'React', 'Python', 'AWS', 'GraphQL', 'gRPC',

@@ -3,7 +3,8 @@ import { deck } from './content.js'
 import { resolveThemeId, themes } from './themes.js'
 import './deck.css'
 
-function Footer({ index, total, theme }) {
+function Footer({ index, total, theme, hidden }) {
+  if (hidden) return null
   return (
     <div className={`slide-foot ${theme === 'dark' ? 'slide-foot--dark' : ''}`}>
       <span>{String(index + 1).padStart(2, '0')}</span>
@@ -43,16 +44,18 @@ function SlideSurface({ slide, className, children }) {
           }}
         />
       ) : null}
-      <div className="slide-qr-pair" aria-label="关注入口">
-        <figure>
-          <div className="slide-qr-window"><img src="/assets/qr-wechat.jpg" alt="微信二维码" /></div>
-          <figcaption>微信</figcaption>
-        </figure>
-        <figure>
-          <div className="slide-qr-window"><img src="/assets/qr-xhs.jpg" alt="小红书二维码" /></div>
-          <figcaption>小红书</figcaption>
-        </figure>
-      </div>
+      {slide.variant === 'cover' ? null : (
+        <div className="slide-qr-pair" aria-label="关注入口">
+          <figure>
+            <div className="slide-qr-window slide-qr-window--wechat"><img src="/assets/qr-wechat.jpg" alt="微信二维码" /></div>
+            <figcaption>微信</figcaption>
+          </figure>
+          <figure>
+            <div className="slide-qr-window slide-qr-window--xhs"><img src="/assets/qr-xhs.jpg" alt="小红书二维码" /></div>
+            <figcaption>小红书</figcaption>
+          </figure>
+        </div>
+      )}
       {children}
     </section>
   )
@@ -361,21 +364,11 @@ function StorySlide({ slide }) {
 
   return (
     <SlideSurface slide={slide} className={`slide--story story--${slide.variant}`}>
-      <div className="story-glow" aria-hidden="true" />
+      {slide.variant === 'cover' ? null : <div className="story-glow" aria-hidden="true" />}
+      {slide.variant === 'cover' ? null : (
       <div className="story-content">
         <Eyebrow>{slide.eyebrow}</Eyebrow>
-        {slide.variant === 'cover' ? (
-          <>
-            <h1 className="story-cover-title">{slide.titleLines.map((line) => <span key={line}>{line}</span>)}</h1>
-            <p className="story-subtitle">{slide.subtitle}</p>
-            <p className="story-note">{slide.note}</p>
-            <div className="story-keywords" aria-label="技术术语墙">
-              {slide.keywords.map((keyword, index) => <span key={keyword} style={{ '--keyword-delay': `${index * 40}ms` }}>{keyword}</span>)}
-            </div>
-          </>
-        ) : (
-          <h2 className="story-title">{slide.title}</h2>
-        )}
+        <h2 className="story-title">{slide.title}</h2>
 
         {slide.variant === 'cross-platform' ? (
           <div className="story-platform-layout">
@@ -419,6 +412,7 @@ function StorySlide({ slide }) {
           <div className="story-closing-layout"><div className="story-advice">{slide.advice.map((item, index) => <div key={item}><span>0{index + 1}</span><strong>{item}</strong></div>)}</div><div className="story-final-lines">{slide.finalLines.map((line, index) => <span key={line} className={index === 2 ? 'is-accent' : ''}>{line}</span>)}</div></div>
         ) : null}
       </div>
+      )}
     </SlideSurface>
   )
 }
@@ -533,7 +527,7 @@ export default function App() {
             key={slide.id}
           >
             {renderSlide(slide, { selected: selectedProject, onSelect: setSelectedProject })}
-            <Footer index={index} total={deck.slides.length} theme={slide.theme} />
+            <Footer index={index} total={deck.slides.length} theme={slide.theme} hidden={slide.variant === 'cover'} />
           </div>
         ))}
       </div>
