@@ -978,15 +978,15 @@ body.present .scroll-hint { display: none; }
   text-align: center;
 }
 
-/* Cover is the poster itself: keep the full 16:9 artwork, including both QR codes. */
-[data-theme="fde"] .slide--story.story--cover {
+/* Poster page is the artwork itself; the original homepage stays on the next slide. */
+[data-theme="fde"] .slide--story.story--poster {
   background: #fff;
 }
-[data-theme="fde"] .slide--story.story--cover::before,
-[data-theme="fde"] .slide--story.story--cover.slide--has-background::after {
+[data-theme="fde"] .slide--story.story--poster::before,
+[data-theme="fde"] .slide--story.story--poster.slide--has-background::after {
   display: none;
 }
-[data-theme="fde"] .slide--story.story--cover .slide-background {
+[data-theme="fde"] .slide--story.story--poster .slide-background {
   object-fit: contain;
   background: #fff;
 }

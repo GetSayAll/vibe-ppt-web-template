@@ -19,6 +19,17 @@ function Eyebrow({ children }) {
 }
 
 const ratioMap = { '1:1': '1 / 1', '4:3': '4 / 3', '3:4': '3 / 4', '16:9': '16 / 9', '9:16': '9 / 16' }
+const KEYWORD_ROW_COUNT = 13
+const KEYWORD_PER_ROW = 12
+
+function keywordRows(keywords) {
+  const source = keywords?.length ? keywords : []
+  if (!source.length) return []
+  return Array.from({ length: KEYWORD_ROW_COUNT }, (_, rowIndex) => {
+    const start = (rowIndex * 5) % source.length
+    return Array.from({ length: KEYWORD_PER_ROW }, (_, colIndex) => source[(start + colIndex) % source.length])
+  })
+}
 
 function getMediaStyle(slide, media = slide, defaultFit = 'cover') {
   return {
@@ -44,14 +55,14 @@ function SlideSurface({ slide, className, children }) {
           }}
         />
       ) : null}
-      {slide.variant === 'cover' ? null : (
+      {slide.variant === 'poster' ? null : (
         <div className="slide-qr-pair" aria-label="关注入口">
           <figure>
-            <div className="slide-qr-window slide-qr-window--wechat"><img src="/assets/qr-wechat.jpg" alt="微信二维码" /></div>
+            <div className="slide-qr-window slide-qr-window--wechat"><img src="./assets/qr-wechat.jpg" alt="微信二维码" /></div>
             <figcaption>微信</figcaption>
           </figure>
           <figure>
-            <div className="slide-qr-window slide-qr-window--xhs"><img src="/assets/qr-xhs.jpg" alt="小红书二维码" /></div>
+            <div className="slide-qr-window slide-qr-window--xhs"><img src="./assets/qr-xhs.jpg" alt="小红书二维码" /></div>
             <figcaption>小红书</figcaption>
           </figure>
         </div>
@@ -364,11 +375,35 @@ function StorySlide({ slide }) {
 
   return (
     <SlideSurface slide={slide} className={`slide--story story--${slide.variant}`}>
-      {slide.variant === 'cover' ? null : <div className="story-glow" aria-hidden="true" />}
-      {slide.variant === 'cover' ? null : (
+      {slide.variant === 'poster' ? null : <div className="story-glow" aria-hidden="true" />}
+      {slide.variant === 'cover' ? (
+        <div className="story-keywords" aria-hidden="true">
+          {keywordRows(slide.keywords).map((row, rowIndex) => (
+            <div className={`story-keywords-row${rowIndex % 2 ? ' is-reverse' : ''}`} key={rowIndex}>
+              <div className="story-keywords-track" style={{ '--keyword-duration': `${28 + (rowIndex % 5) * 7}s`, '--keyword-shift': `-${rowIndex * 3.6}s` }}>
+                <div className="story-keywords-set">
+                  {row.map((keyword, index) => <span key={`${keyword}-${index}`}>{keyword}</span>)}
+                </div>
+                <div className="story-keywords-set">
+                  {row.map((keyword, index) => <span key={`${keyword}-copy-${index}`}>{keyword}</span>)}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+      {slide.variant === 'poster' ? null : (
       <div className="story-content">
         <Eyebrow>{slide.eyebrow}</Eyebrow>
-        <h2 className="story-title">{slide.title}</h2>
+        {slide.variant === 'cover' ? (
+          <>
+            <h1 className="story-cover-title">{slide.titleLines.map((line) => <span key={line}>{line}</span>)}</h1>
+            <p className="story-subtitle">{slide.subtitle}</p>
+            <p className="story-note">{slide.note}</p>
+          </>
+        ) : (
+          <h2 className="story-title">{slide.title}</h2>
+        )}
 
         {slide.variant === 'cross-platform' ? (
           <div className="story-platform-layout">
@@ -527,7 +562,7 @@ export default function App() {
             key={slide.id}
           >
             {renderSlide(slide, { selected: selectedProject, onSelect: setSelectedProject })}
-            <Footer index={index} total={deck.slides.length} theme={slide.theme} hidden={slide.variant === 'cover'} />
+            <Footer index={index} total={deck.slides.length} theme={slide.theme} hidden={slide.variant === 'poster'} />
           </div>
         ))}
       </div>
