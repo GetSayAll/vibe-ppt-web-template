@@ -499,7 +499,7 @@ body.present .scroll-hint { display: none; }
 .story-platform-core span { color: #e8d7af; font-family: var(--mono); font-size: 11px; }
 .story-platform-core strong { margin-top: 9px; color: #ffc96b; font-size: 20px; }
 .story-result { align-self: end; color: #c6e7ef; font-size: 23px; line-height: 1.28; }
-.story-punch { color: #ffc96b; font-size: 22px; line-height: 1.35; letter-spacing: -.02em; }
+.story-punch { color: #ffc96b; font-size: 22px; line-height: 1.35; letter-spacing: -.02em; text-wrap: balance; }
 .story-platform-layout .story-punch { grid-column: 1 / -1; max-width: 640px; margin-top: 4px; }
 .story-problem-layout { display: grid; grid-template-columns: 1fr 1.15fr; gap: 24px; margin-top: auto; }
 .story-compare { position: relative; min-height: 340px; padding: 26px; border: 1px solid #8fe7ff42; background: #06101acc; }
@@ -549,6 +549,68 @@ body.present .scroll-hint { display: none; }
 .story-final-lines { display: grid; gap: 0; justify-items: start; align-self: end; }
 .story-final-lines span { color: #e7f4f7; font-family: var(--display); font-size: 44px; font-weight: 400; line-height: 1.08; letter-spacing: -.05em; }
 .story-final-lines span.is-accent { color: #ffc96b; font-size: 58px; }
+
+/* Numbers / quote / steps / loop read the story surface through four local tokens,
+   so the same markup stays legible on the light fde deck and on the dark story themes. */
+.slide--story { --story-ink: var(--ink); --story-muted: var(--muted); --story-line: var(--line); --story-card: #ffffffcc; --story-card-shadow: 0 10px 24px #5c9ca514; --story-accent: var(--blue); --story-card-radius: 0px; }
+[data-theme]:not([data-theme="fde"]) .slide--story { --story-ink: #f5f5f7; --story-muted: #a1a1a6; --story-line: #ffffff24; --story-card: #ffffff0d; --story-card-shadow: none; --story-accent: #ffc96b; --story-card-radius: 16px; }
+
+/* Numbers wall: four hard facts, no chart, no decoration */
+.story-numbers-layout { margin-top: auto; }
+.story-numbers { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 2px solid var(--story-accent); }
+.story-numbers > div { padding: 26px 24px 20px 0; border-right: 1px solid var(--story-line); }
+.story-numbers > div:last-child { border-right: 0; }
+.story-numbers strong { display: block; color: var(--story-ink); font-family: var(--display); font-size: 68px; font-weight: 650; line-height: 1; letter-spacing: -.06em; }
+.story-numbers span { display: block; margin-top: 14px; color: var(--story-muted); font-family: var(--mono); font-size: 13px; letter-spacing: .18em; text-transform: uppercase; }
+.story-numbers-foot { display: flex; align-items: baseline; justify-content: space-between; gap: 40px; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--story-line); }
+.story-numbers-foot p { max-width: 720px; color: var(--story-ink); font-size: 22px; line-height: 1.45; }
+.story-numbers-foot small { flex: none; color: var(--story-muted); font-family: var(--mono); font-size: 13px; }
+
+/* Quote: one real sentence from a real report */
+.story-quote-layout { display: grid; grid-template-columns: 1.45fr .55fr; gap: 46px; align-items: start; margin-top: 44px; }
+.story-quote { margin: 0; padding-left: 24px; border-left: 4px solid var(--story-accent); }
+.story-quote p { color: var(--story-ink); font-family: var(--body); font-size: 28px; line-height: 1.45; letter-spacing: 0; word-break: break-word; }
+.story-quote cite { display: block; margin-top: 18px; color: var(--story-muted); font-family: var(--mono); font-size: 14px; font-style: normal; letter-spacing: .04em; }
+.story-quote-side { display: grid; gap: 8px; }
+.story-quote-side > div { padding: 11px 0 11px 16px; border-left: 1px solid var(--story-line); }
+.story-quote-side strong { display: block; color: var(--story-ink); font-family: var(--mono); font-size: 16px; }
+.story-quote-side span { display: block; margin-top: 6px; color: var(--story-muted); font-size: 16px; line-height: 1.4; }
+.story-quote-note { grid-column: 1 / -1; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--story-line); color: var(--story-muted); font-size: 19px; line-height: 1.45; }
+
+/* Steps: one row of equal cards. Used for hardware trials, the five actions, and what changed. */
+.story-steps-layout { margin-top: 72px; }
+.story-steps { display: grid; gap: 14px; }
+.story-step { min-height: 264px; padding: 20px 18px; display: flex; flex-direction: column; background: var(--story-card); border-top: 3px solid var(--story-accent); border-radius: var(--story-card-radius, 0px); box-shadow: var(--story-card-shadow); }
+.story-step span { color: var(--story-muted); font-family: var(--mono); font-size: 13px; letter-spacing: .06em; }
+.story-step strong { margin-top: 48px; color: var(--story-ink); font-size: 25px; font-weight: 650; line-height: 1.12; letter-spacing: -.03em; }
+.story-step small { margin-top: 10px; color: var(--story-muted); font-size: 17px; line-height: 1.45; }
+.story-steps[data-count="4"] .story-step strong,
+.story-steps[data-count="5"] .story-step strong { font-size: 20px; }
+.story-steps[data-count="5"] .story-step strong { margin-top: 48px; }
+.story-steps[data-count="5"] .story-step { min-height: 176px; padding: 18px 14px; }
+.story-steps[data-count="5"] .story-step small { font-size: 14px; }
+.story-steps-note { margin-top: 20px; max-width: 860px; color: var(--story-muted); font-size: 19px; line-height: 1.45; }
+.story-steps-punch { margin-top: 14px; color: var(--story-accent); font-size: 28px; font-weight: 650; line-height: 1.25; letter-spacing: -.03em; }
+
+/* Ends: the delivery map — eight surfaces, one product */
+.story-ends-layout { margin-top: 44px; }
+.story-ends { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.story-ends article { min-height: 146px; padding: 16px 16px 18px; display: flex; flex-direction: column; background: var(--story-card); border: 1px solid var(--story-line); border-top: 3px solid var(--story-accent); border-radius: var(--story-card-radius, 0px); box-shadow: var(--story-card-shadow); }
+.story-ends span { color: var(--story-muted); font-family: var(--mono); font-size: 12px; letter-spacing: .1em; }
+.story-ends strong { margin-top: 22px; color: var(--story-ink); font-size: 23px; font-weight: 650; line-height: 1.15; letter-spacing: -.02em; }
+.story-ends small { margin-top: 8px; color: var(--story-muted); font-size: 15px; line-height: 1.4; }
+.story-ends-punch { margin-top: 22px; color: var(--story-accent); font-size: 27px; font-weight: 650; line-height: 1.25; letter-spacing: -.03em; }
+
+/* Loop: the maintenance cycle, stated as the reason it wears you down */
+.story-loop-layout { display: grid; grid-template-columns: 1fr 470px; gap: 60px; align-items: center; margin-top: 54px; }
+.story-loop-pain { max-width: 480px; color: var(--story-ink); font-size: 32px; font-weight: 620; line-height: 1.35; letter-spacing: -.035em; }
+.story-loop-punch { max-width: 540px; margin-top: 26px; color: var(--story-accent); font-size: 25px; font-weight: 650; line-height: 1.35; letter-spacing: -.03em; }
+.story-loop { display: grid; gap: 10px; }
+.story-loop-step { display: grid; grid-template-columns: 34px 1fr; align-items: center; gap: 10px; padding: 15px 16px; background: var(--story-card); border-left: 3px solid var(--story-line); border-radius: var(--story-card-radius, 0px); }
+.story-loop-step span { color: var(--story-muted); font-family: var(--mono); font-size: 12px; }
+.story-loop-step strong { color: var(--story-ink); font-size: 19px; font-weight: 600; }
+.story-loop-step.is-last { background: #193149; border-left-color: var(--blue); }
+.story-loop-step.is-last span, .story-loop-step.is-last strong { color: #fff; }
 
 @media (max-width: 760px) {
   .story-content { padding: 28px 24px 30px; }
@@ -1269,8 +1331,9 @@ body.present .scroll-hint { display: none; }
   align-self: center;
   padding: 24px 0 24px 26px;
   border-left: 4px solid #f17764;
-  font-size: 36px;
+  font-size: 34px;
   line-height: 1.25;
+  letter-spacing: -.045em;
 }
 
 /* Page 7: advice and final statement follow the same golden split. */
@@ -1397,3 +1460,21 @@ body.present .slide {
   [data-theme="fde"] .slide-qr-pair figure { height: auto; padding: 9px 9px 7px; grid-template-rows: auto 28px; gap: 0; border-radius: 16px; }
   [data-theme="fde"] .slide-qr-pair figcaption { font-size: 20px; }
 }
+
+/* Apple-surface closing: keep the three takeaway rows near the headline instead of pinning them to the floor. */
+[data-theme="apple"] .story-closing-layout { margin-top: 64px; align-items: start; }
+[data-theme="apple"] .story-closing-layout .story-final-lines { align-self: start; margin-top: 4px; }
+
+
+/* Apple-surface type scale: raise the small copy so it survives a projector. */
+[data-theme="apple"] .story-content .eyebrow { font-size: 14px; }
+[data-theme="apple"] .story-subtitle { font-size: 28px; }
+[data-theme="apple"] .story-node strong { font-size: 20px; }
+[data-theme="apple"] .story-node__index { font-size: 11px; }
+[data-theme="apple"] .story-compare-label { font-size: 13px; }
+[data-theme="apple"] .story-punch { font-size: 26px; }
+[data-theme="apple"] .story-step span,
+[data-theme="apple"] .story-ends span { font-size: 14px; }
+[data-theme="apple"] .story-advice strong { font-size: 22px; }
+[data-theme="apple"] .story-final-lines { gap: 8px; }
+[data-theme="apple"] .story-final-lines span { font-size: 46px; line-height: 1.12; }

@@ -1,0 +1,9 @@
+《SayAll 是怎么开始的》网页 PPT
+
+使用方法：
+1. 双击“SayAll-是怎么开始的.html”。
+2. 用现代浏览器打开（Chrome、Edge、Safari、Firefox）。
+3. 点击右上角“演讲模式”，用左右方向键翻页，Esc 退出。
+
+单文件已内嵌程序与样式，不需要安装依赖，也不需要本地服务。
+需要改内容时，编辑本仓库 src/content.js，再执行 npm run build。

@@ -55,7 +55,7 @@ function SlideSurface({ slide, className, children }) {
           }}
         />
       ) : null}
-      {slide.variant === 'poster' ? null : (
+      {slide.showQr ? (
         <div className="slide-qr-pair" aria-label="关注入口">
           <figure>
             <div className="slide-qr-window slide-qr-window--wechat"><img src="./assets/qr-wechat.jpg" alt="微信二维码" /></div>
@@ -66,7 +66,7 @@ function SlideSurface({ slide, className, children }) {
             <figcaption>小红书</figcaption>
           </figure>
         </div>
-      )}
+      ) : null}
       {children}
     </section>
   )
@@ -399,7 +399,7 @@ function StorySlide({ slide }) {
           <>
             <h1 className="story-cover-title">{slide.titleLines.map((line) => <span key={line}>{line}</span>)}</h1>
             <p className="story-subtitle">{slide.subtitle}</p>
-            <p className="story-note">{slide.note}</p>
+            {slide.note ? <p className="story-note">{slide.note}</p> : null}
           </>
         ) : (
           <h2 className="story-title">{slide.title}</h2>
@@ -441,6 +441,79 @@ function StorySlide({ slide }) {
 
         {slide.variant === 'work-style' ? (
           <div className="story-work-layout"><div className="story-change-list">{slide.changes.map((change, index) => <div className="story-change" key={change.from}><span>0{index + 1}</span><div><strong>{change.from}</strong><em>{change.to}</em></div></div>)}</div><p className="story-punch">{slide.punch}</p></div>
+        ) : null}
+
+        {slide.variant === 'steps' ? (
+          <div className="story-steps-layout">
+            <div className="story-steps" data-count={slide.items.length} style={{ gridTemplateColumns: `repeat(${slide.items.length}, minmax(0, 1fr))` }}>
+              {slide.items.map((item) => (
+                <article className="story-step" key={item.label}>
+                  <span>{item.label}</span>
+                  <strong>{item.title}</strong>
+                  <small>{item.note}</small>
+                </article>
+              ))}
+            </div>
+            {slide.note ? <p className="story-steps-note">{slide.note}</p> : null}
+            {slide.punch ? <p className="story-steps-punch">{slide.punch}</p> : null}
+          </div>
+        ) : null}
+
+        {slide.variant === 'ends' ? (
+          <div className="story-ends-layout">
+            <div className="story-ends">
+              {slide.items.map((item) => (
+                <article key={item.title}>
+                  <span>{item.label}</span>
+                  <strong>{item.title}</strong>
+                  <small>{item.note}</small>
+                </article>
+              ))}
+            </div>
+            {slide.punch ? <p className="story-ends-punch">{slide.punch}</p> : null}
+          </div>
+        ) : null}
+
+        {slide.variant === 'loop' ? (
+          <div className="story-loop-layout">
+            <div>
+              <p className="story-loop-pain">{slide.pain}</p>
+              <p className="story-loop-punch">{slide.punch}</p>
+            </div>
+            <div className="story-loop">
+              {slide.loop.map((step, index) => (
+                <div className={`story-loop-step ${index === slide.loop.length - 1 ? 'is-last' : ''}`} key={step}>
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  <strong>{step}</strong>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {slide.variant === 'numbers' ? (
+          <div className="story-numbers-layout">
+            <div className="story-numbers">
+              {slide.stats.map((stat) => <div key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span></div>)}
+            </div>
+            <div className="story-numbers-foot">
+              <p>{slide.caption}</p>
+              {slide.note ? <small>{slide.note}</small> : null}
+            </div>
+          </div>
+        ) : null}
+
+        {slide.variant === 'quote' ? (
+          <div className="story-quote-layout">
+            <blockquote className="story-quote">
+              <p>{slide.quote}</p>
+              <cite>{slide.source}</cite>
+            </blockquote>
+            <div className="story-quote-side">
+              {slide.facts.map((fact) => <div key={fact.value}><strong>{fact.value}</strong><span>{fact.label}</span></div>)}
+            </div>
+            {slide.note ? <p className="story-quote-note">{slide.note}</p> : null}
+          </div>
         ) : null}
 
         {slide.variant === 'closing' ? (
